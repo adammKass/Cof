@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --color-primary: #7b542f;
+  --color-secondary: #b6771d;
+  --color-accent: #ff9d00;
+  --color-accent-light: #ffcf71;
+  --color-white: #ffffff;
+  --color-black: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #3a281a;
+    --color-secondary: #5a3d12;
+    --color-accent: #ff9d00;
+    --color-accent-light: #ffb84d;
+    --color-white: #e6e6e6;
+    --color-black: #0d0d0d;
+  }
+}
+
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: 300 700;
+  src: url("/fonts/Oswald-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Quattrocento;
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/Quattrocento-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Quattrocento;
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/Quattrocento-Bold.ttf") format("truetype");
+}
+
+@theme {
+  --font-sans: "Oswald", sans-serif;
+  --font-serif: "Quattrocento", serif;
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-white: var(--color-white);
+  --color-black: var(--color-black);
+}
+
+body {
+  font-family: var(--font-serif);
+}
+
+html,
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+@layer components {
+  .content {
+    @apply w-full max-w-7xl mx-auto px-4;
+  }
+}
+
+@layer base {
+  main {
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+  }
+  main::-webkit-scrollbar {
+    display: none;
+  }
+}
