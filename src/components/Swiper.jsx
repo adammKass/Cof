@@ -1,49 +1,71 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { heroSlides } from "../constants";
 import { motion, useMotionValue, useTransform } from "motion/react";
 import Dots from "./Dots";
 import { FiChevronRight } from "react-icons/fi";
+import { useIsMobile } from "./utils/useIsMobile";
+
+//Setting Drag buffer, If scrolled below this threshold, do nothing, smaller on mobile
 
 const DRAG_BUFFER = 100;
+const DRAG_BUFFER_MOBILE = 30;
+
+// Only spring keeps the position on drag, dont know why, but it works, tween resets to default position of slide
 
 const SPRING_OPTIONS = {
   type: "spring",
-  mass: 3,
-  stiffness: 800,
-  damping: 200,
+  mass: 5,
+  stiffness: 372,
+  damping: 100,
 };
 
 const Swiper = () => {
   const [isDragging, setIsDragging] = useState(false);
-  const [sliderIndex, setSliderIndex] = useState(0);
 
+  const [sliderIndex, setSliderIndex] = useState(0); //SliderIndex logic, powers whole slider animation and parallax
+  const isMobile = useIsMobile();
+
+  const dragBuffer = isMobile ? DRAG_BUFFER_MOBILE : DRAG_BUFFER;
+
+  //Drag translate X
   const dragX = useMotionValue(0);
-  const bgX = useTransform(dragX, (x) => x * -0.25);
-  const bgScale = useTransform(dragX, [-800, 0, 800], [1.2, 1, 1.2]);
+  const bgX = useTransform(dragX, (x) => x * -0.8);
+
+  // Lock on Scroll and Keyboard nav, to prevent fast scrolls
+  const canNavigateRef = useRef(true);
+  const triggerCooldown = () => {
+    canNavigateRef.current = false;
+    setTimeout(() => (canNavigateRef.current = true), 800);
+  };
 
   const onDragStart = () => {
     setIsDragging(true);
   };
+
+  // Change sliderIndex on drag
   const onDragEnd = () => {
     setIsDragging(false);
     const x = dragX.get();
-    if (x <= -DRAG_BUFFER && sliderIndex < heroSlides.length - 1) {
+    if (x <= -dragBuffer && sliderIndex < heroSlides.length - 1) {
+      triggerCooldown();
       setSliderIndex((prev) => prev + 1);
-    } else if (x >= DRAG_BUFFER && sliderIndex > 0) {
+    } else if (x >= dragBuffer && sliderIndex > 0) {
+      triggerCooldown();
       setSliderIndex((prev) => prev - 1);
     }
   };
 
   // Keyboard navigation
-
   useEffect(() => {
     const onKey = (e) => {
+      if (!canNavigateRef.current) return;
       setSliderIndex((prev) => {
         switch (e.key) {
           case "ArrowDown":
           case "ArrowRight":
           case "PageDown":
             if (prev < heroSlides.length - 1) {
+              triggerCooldown();
               return prev + 1;
             }
             break;
@@ -51,11 +73,12 @@ const Swiper = () => {
           case "ArrowLeft":
           case "PageUp":
             if (prev > 0) {
+              triggerCooldown();
               return prev - 1;
             }
             break;
         }
-        return prev; // no change
+        return prev;
       });
     };
 
@@ -64,12 +87,12 @@ const Swiper = () => {
   }, []);
 
   // Wheel navigation, experiment with requestAnimationFrame
-
   useEffect(() => {
     let queuedDirection = 0;
     let rafId = null;
 
     const onWheel = (e) => {
+      if (!canNavigateRef.current) return;
       e.preventDefault();
       queuedDirection += e.deltaY > 0 ? 1 : -1;
 
@@ -78,12 +101,14 @@ const Swiper = () => {
       rafId = requestAnimationFrame(() => {
         setSliderIndex((prev) => {
           if (queuedDirection > 0 && prev < heroSlides.length - 1) {
+            triggerCooldown();
             return prev + 1;
           }
           if (queuedDirection < 0 && prev > 0) {
+            triggerCooldown();
             return prev - 1;
           }
-          return prev; // no change (at edge)
+          return prev;
         });
 
         queuedDirection = 0;
@@ -100,6 +125,7 @@ const Swiper = () => {
 
   return (
     <main className="relative overflow-hidden min-h-screen">
+      {/* Slider Container*/}
       <motion.div
         drag="x"
         dragConstraints={{
@@ -116,16 +142,21 @@ const Swiper = () => {
         className="flex flex-row cursor-grab active:cursor-grabbing bg-blue-400 w-screen h-screen"
       >
         {heroSlides.map((slide, index) => (
+          // Slide container
           <div
             key={index}
             className="relative w-screen shrink-0 h-full overflow-hidden flex flex-col justify-center bg-amber-400 "
           >
-            {/* Image container */}
+            {/* Slide Image container */}
             <motion.div
+              className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
               style={{
                 x: bgX,
               }}
-              className="absolute w-full h-full top-0 scale-150 left-0 will-change-transform bg-red-400"
+              animate={{
+                translateX: `${(index - sliderIndex) * -100 * 0.8}%`,
+              }}
+              transition={SPRING_OPTIONS}
             >
               <img
                 src={slide.image}
@@ -133,8 +164,8 @@ const Swiper = () => {
                 className="w-full h-full object-cover pointer-events-none "
               />
             </motion.div>
-            {/* Text container */}
 
+            {/* Slide Text container */}
             <div className="content flex flex-col gap-1 z-50">
               <span className="font-sans font-light text-4xl text-white">
                 {slide.heading}
@@ -148,7 +179,6 @@ const Swiper = () => {
                 className="relative group mt-2 w-fit text-white uppercase font-bold text-2xl overflow-hidden"
               >
                 <span className="flex items-center gap-2">
-                  {/* TEXT */}
                   <span className="relative">
                     {slide.button}
 
@@ -179,10 +209,10 @@ const Swiper = () => {
           </div>
         ))}
       </motion.div>
+      {/* Dots Pagination on bottom of screen */}
       <div className="absolute bottom-[3vh] left-0 right-0 mx-auto content">
         <Dots sliderIndex={sliderIndex} setSliderIndex={setSliderIndex}></Dots>
       </div>
-      <div className="pointer-events-none absolute bottom-0 top-0 left-0 w-[min(60vw,800px)] bg-linear-to-r from-orange-950/50 from-30% to-transparent to-90%" />
     </main>
   );
 };
