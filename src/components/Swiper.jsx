@@ -167,21 +167,26 @@ const Swiper = () => {
 
             {/* Slide Text container */}
             <div className="content flex flex-col gap-1 z-50">
-              <span className="font-sans font-light text-4xl landscape:text-2xl lg:landscape:text-4xl text-white">
-                {slide.heading}
-              </span>
-              <h1 className="font-sans text-8xl landscape:text-6xl lg:landscape:text-8xl mb-2 font-light text-white uppercase">
+              {isMobile && (
+                <div className="absolute inset-0 bg-amber-950/20 pointer-events-none z-40" />
+              )}
+              {isMobile || (
+                <span className="font-sans font-light text-4xl landscape:text-2xl lg:landscape:text-4xl text-white z-60">
+                  {slide.heading}
+                </span>
+              )}
+              <h1 className="font-sans text-8xl landscape:text-6xl lg:landscape:text-8xl mb-2 font-light text-white uppercase z-60">
                 {slide.name}
               </h1>
-              <p className="text-white landscape:text-sm lg:landscape:text-base md:max-w-1/2">
+              <p className="text-white landscape:text-sm lg:landscape:text-base md:max-w-1/2 z-60">
                 {slide.subheading}
               </p>
               <a
                 href={slide.path}
                 className="relative group mt-2 w-fit text-white uppercase font-bold text-2xl overflow-hidden"
               >
-                <span className="flex items-center gap-2">
-                  <span className="relative landscape:text-base lg:landscape:text-xl">
+                <span className="flex items-center gap-2 ">
+                  <span className="relative landscape:text-base lg:landscape:text-xl z-60">
                     {slide.button}
 
                     {/* Underline that slides out on hover */}
@@ -189,7 +194,7 @@ const Swiper = () => {
                       className="
                         absolute left-0 right-0 bottom-0 h-0.5 bg-current
                         transition-all duration-300
-                        group-hover:translate-x-full group-hover:opacity-0
+                        group-hover:translate-x-full group-hover:opacity-0 z-60
                       "
                     />
                   </span>
@@ -200,10 +205,10 @@ const Swiper = () => {
                       w-8 h-8 rounded-full bg-current flex items-center justify-center
                       opacity-0 -translate-x-1.5
                       transition-all duration-300
-                      group-hover:opacity-100 group-hover:translate-x-0
+                      group-hover:opacity-100 group-hover:translate-x-0 z-60
                     "
                   >
-                    <FiChevronRight className="w-6 h-6 text-black"></FiChevronRight>
+                    <FiChevronRight className="w-6 h-6 text-black z-60"></FiChevronRight>
                   </span>
                 </span>
               </a>
@@ -215,9 +220,6 @@ const Swiper = () => {
       <div className="absolute bottom-[3vh] left-0 right-0 mx-auto content">
         <Dots sliderIndex={sliderIndex} setSliderIndex={setSliderIndex}></Dots>
       </div>
-      {isMobile && (
-        <div className="absolute inset-0 bg-amber-950/20 pointer-events-none" />
-      )}
     </main>
   );
 };

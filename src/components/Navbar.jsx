@@ -2,7 +2,7 @@ import { navlinks } from "../constants";
 
 const Navbar = () => {
   return (
-    <div className="navbar fixed bg-white shadow-sm z-30 p-0">
+    <div className="navbar fixed bg-white shadow-sm z-60 p-0">
       <div className="content flex flex-row">
         <div className="navbar-start">
           <div className="dropdown">
