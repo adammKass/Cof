@@ -215,7 +215,9 @@ const Swiper = () => {
       <div className="absolute bottom-[3vh] left-0 right-0 mx-auto content">
         <Dots sliderIndex={sliderIndex} setSliderIndex={setSliderIndex}></Dots>
       </div>
-      {isMobile && <div className="absolute inset-0 bg-amber-950/20" />}
+      {isMobile && (
+        <div className="absolute inset-0 bg-amber-950/20 pointer-events-none" />
+      )}
     </main>
   );
 };
