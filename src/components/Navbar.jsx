@@ -25,11 +25,16 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+              className="menu menu-sm dropdown-content bg-white  rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
               {navlinks.map((link) => (
-                <li key={link.name}>
-                  <a href={link.path}>{link.name}</a>
+                <li
+                  key={link.name}
+                  className="font-sans font-extralight uppercase"
+                >
+                  <a href={link.path} className="text-lg">
+                    {link.name}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -41,14 +46,16 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             {navlinks.map((link) => (
-              <li key={link.name}>
+              <li key={link.name} className="font-sans uppercase">
                 <a href={link.path}>{link.name}</a>
               </li>
             ))}
           </ul>
         </div>
         <div className="navbar-end">
-          <a className="btn btn-accent">Contact Us</a>
+          <a className="btn btn-accent font-sans font-normal uppercase text-black">
+            Contact Us
+          </a>
         </div>
       </div>
     </div>

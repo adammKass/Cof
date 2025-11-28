@@ -124,7 +124,7 @@ const Swiper = () => {
   }, []);
 
   return (
-    <main className="relative overflow-hidden min-h-screen">
+    <main className="relative overflow-hidden min-h-dvh">
       {/* Slider Container*/}
       <motion.div
         drag="x"
@@ -139,7 +139,7 @@ const Swiper = () => {
         onDragEnd={onDragEnd}
         style={{ x: dragX }}
         transition={SPRING_OPTIONS}
-        className="flex flex-row cursor-grab active:cursor-grabbing bg-blue-400 w-screen h-screen"
+        className="flex flex-row cursor-grab active:cursor-grabbing bg-blue-400 w-screen h-dvh"
       >
         {heroSlides.map((slide, index) => (
           // Slide container
@@ -167,19 +167,21 @@ const Swiper = () => {
 
             {/* Slide Text container */}
             <div className="content flex flex-col gap-1 z-50">
-              <span className="font-sans font-light text-4xl text-white">
+              <span className="font-sans font-light text-4xl landscape:text-2xl lg:landscape:text-4xl text-white">
                 {slide.heading}
               </span>
-              <h1 className="font-sans text-8xl mb-2 font-light text-white uppercase">
+              <h1 className="font-sans text-8xl landscape:text-6xl lg:landscape:text-8xl mb-2 font-light text-white uppercase">
                 {slide.name}
               </h1>
-              <p className="text-white md:max-w-1/2">{slide.subheading}</p>
+              <p className="text-white landscape:text-sm lg:landscape:text-base md:max-w-1/2">
+                {slide.subheading}
+              </p>
               <a
                 href={slide.path}
                 className="relative group mt-2 w-fit text-white uppercase font-bold text-2xl overflow-hidden"
               >
                 <span className="flex items-center gap-2">
-                  <span className="relative">
+                  <span className="relative landscape:text-base lg:landscape:text-xl">
                     {slide.button}
 
                     {/* Underline that slides out on hover */}
@@ -213,6 +215,7 @@ const Swiper = () => {
       <div className="absolute bottom-[3vh] left-0 right-0 mx-auto content">
         <Dots sliderIndex={sliderIndex} setSliderIndex={setSliderIndex}></Dots>
       </div>
+      {isMobile && <div className="absolute inset-0 bg-amber-950/20" />}
     </main>
   );
 };
