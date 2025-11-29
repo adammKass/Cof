@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+//Hook defining if its mobile screen
+
 export function useIsMobile(MOBILE_BREAKPOINT = 820) {
   const [isMobile, setIsMobile] = useState(undefined);
 

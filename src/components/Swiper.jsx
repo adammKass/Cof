@@ -4,6 +4,7 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import Dots from "./Dots";
 import { FiChevronRight } from "react-icons/fi";
 import { useIsMobile } from "./utils/useIsMobile";
+import useCooldown from "./utils/useCooldown";
 
 //Setting Drag buffer, If scrolled below this threshold, do nothing, smaller on mobile
 
@@ -32,11 +33,7 @@ const Swiper = () => {
   const bgX = useTransform(dragX, (x) => x * -0.8);
 
   // Lock on Scroll and Keyboard nav, to prevent fast scrolls
-  const canNavigateRef = useRef(true);
-  const triggerCooldown = () => {
-    canNavigateRef.current = false;
-    setTimeout(() => (canNavigateRef.current = true), 800);
-  };
+  const { canNavigateRef, triggerCooldown } = useCooldown();
 
   const onDragStart = () => {
     setIsDragging(true);
@@ -124,9 +121,20 @@ const Swiper = () => {
   }, []);
 
   return (
-    <main className="relative overflow-hidden min-h-dvh">
+    <motion.main
+      aria-label="Swiper"
+      aria-live="polite"
+      className="relative overflow-hidden min-h-dvh"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ ease: "easeIn", duration: 0.4 }}
+    >
+      <h1 className="sr-only">{"Coffee shop"}</h1>
       {/* Slider Container*/}
       <motion.div
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Featured content"
         drag="x"
         dragConstraints={{
           left: 0,
@@ -139,13 +147,17 @@ const Swiper = () => {
         onDragEnd={onDragEnd}
         style={{ x: dragX }}
         transition={SPRING_OPTIONS}
-        className="flex flex-row cursor-grab active:cursor-grabbing bg-blue-400 w-screen h-dvh"
+        className="flex flex-row cursor-grab active:cursor-grabbing w-screen h-dvh"
       >
         {heroSlides.map((slide, index) => (
           // Slide container
-          <div
+          <section
             key={index}
-            className="relative w-screen shrink-0 h-full overflow-hidden flex flex-col justify-center bg-amber-400 "
+            role="group"
+            aria-label={`Slide ${index + 1}: ${slide.heading}`}
+            inert={index !== sliderIndex ? true : false}
+            aria-hidden={index !== sliderIndex}
+            className="relative w-screen shrink-0 h-full overflow-hidden flex flex-col justify-center"
           >
             {/* Slide Image container */}
             <motion.div
@@ -160,30 +172,31 @@ const Swiper = () => {
             >
               <img
                 src={slide.image}
-                alt={slide.heading}
-                className="w-full h-full object-cover pointer-events-none "
+                alt={slide.imageAlt}
+                height={1920}
+                width={1080}
+                className={`w-full h-full object-cover pointer-events-none ${
+                  isMobile ? "brightness-90" : "brightness-100"
+                }`}
               />
             </motion.div>
 
             {/* Slide Text container */}
-            <div className="content flex flex-col gap-1 z-50">
-              {isMobile && (
-                <div className="absolute inset-0 bg-amber-950/20 pointer-events-none z-40" />
-              )}
+            <div className="content flex flex-col gap-1 z-50 mt-4">
               {isMobile || (
                 <span className="font-sans font-light text-4xl landscape:text-2xl lg:landscape:text-4xl text-white z-60">
                   {slide.heading}
                 </span>
               )}
-              <h1 className="font-sans text-8xl landscape:text-6xl lg:landscape:text-8xl mb-2 font-light text-white uppercase z-60">
+              <h2 className="font-sans text-8xl landscape:text-5xl lg:landscape:text-8xl mb-2 font-light text-white uppercase z-60">
                 {slide.name}
-              </h1>
+              </h2>
               <p className="text-white landscape:text-sm lg:landscape:text-base md:max-w-1/2 z-60">
                 {slide.subheading}
               </p>
               <a
                 href={slide.path}
-                className="relative group mt-2 w-fit text-white uppercase font-bold text-2xl overflow-hidden"
+                className="relative group w-fit text-white uppercase font-bold text-2xl overflow-hidden"
               >
                 <span className="flex items-center gap-2 ">
                   <span className="relative landscape:text-base lg:landscape:text-xl z-60">
@@ -213,14 +226,14 @@ const Swiper = () => {
                 </span>
               </a>
             </div>
-          </div>
+          </section>
         ))}
       </motion.div>
       {/* Dots Pagination on bottom of screen */}
       <div className="absolute bottom-[3vh] left-0 right-0 mx-auto content">
         <Dots sliderIndex={sliderIndex} setSliderIndex={setSliderIndex}></Dots>
       </div>
-    </main>
+    </motion.main>
   );
 };
 export default Swiper;

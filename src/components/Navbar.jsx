@@ -1,12 +1,21 @@
-import { navlinks } from "../constants";
+import { useState } from "react";
+import { navCTA, navlinks } from "../constants";
 
 const Navbar = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
   return (
-    <div className="navbar fixed bg-white shadow-sm z-60 p-0">
-      <div className="content flex flex-row">
+    <header className="navbar fixed bg-white shadow-sm z-60 p-0">
+      <nav aria-label="Main Navigation" className="content flex flex-row">
         <div className="navbar-start">
           <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <button
+              aria-label="Open navigation menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              onClick={() => setMobileOpen((o) => !o)}
+              tabIndex={0}
+              className="btn btn-ghost lg:hidden"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -22,43 +31,51 @@ const Navbar = () => {
                   d="M4 6h16M4 12h8m-8 6h16"
                 />{" "}
               </svg>
-            </div>
+            </button>
             <ul
               tabIndex="-1"
+              role="menu"
               className="menu menu-sm dropdown-content bg-white  rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
               {navlinks.map((link) => (
                 <li
                   key={link.name}
+                  role="none"
                   className="font-sans font-extralight uppercase"
                 >
-                  <a href={link.path} className="text-lg">
+                  <a role="menuitem" href={link.path} className="text-lg">
                     {link.name}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
+          {/* LOGO, text for now */}
           <a className="btn btn-ghost font-sans text-accent text-xl uppercase">
             Coof
           </a>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
+          <ul role="menubar" className="menu menu-horizontal px-1">
             {navlinks.map((link) => (
-              <li key={link.name} className="font-sans uppercase">
-                <a href={link.path}>{link.name}</a>
+              <li role="none" key={link.name} className="font-sans uppercase">
+                <a role="menuitem" href={link.path}>
+                  {link.name}
+                </a>
               </li>
             ))}
           </ul>
         </div>
         <div className="navbar-end">
-          <a className="btn btn-accent font-sans font-normal uppercase text-black">
-            Contact Us
+          <a
+            href={navCTA.path}
+            className="btn btn-accent font-sans font-normal uppercase text-black"
+          >
+            {navCTA.name}
           </a>
         </div>
-      </div>
-    </div>
+      </nav>
+    </header>
   );
 };
 export default Navbar;
